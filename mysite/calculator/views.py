@@ -4,3 +4,5 @@ from django.http import HttpResponse
 
 def hello(request , number):
     return HttpResponse(f"Hello, World! {number}")
+def calc(request):
+    pass
