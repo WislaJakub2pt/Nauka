@@ -4,5 +4,5 @@ from django.urls import include, path
 from calculator.views import hello
 
 urlpatterns = [
-    path("hello",hello)
+    path("hello/<int:number>",hello)
 ]
