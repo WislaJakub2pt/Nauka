@@ -10,3 +10,12 @@ class User(models.Model):
     def __string__(self):
         return f"{self.username} - {self.id}"   
         
+class Note(models.Model):
+    content = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.user.username} - {self.content}"
+    
+    def is_longer_than(self, min_length):
+        return len(self.content) >= min_length

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from calculator.models import User
+from calculator.models import User , Note
 
 
 def hello(request , number):
@@ -52,6 +52,30 @@ def login(request):
 
     try:
         user = User.objects.get(username=username , password=password)
+        user.login_count += 1 
+        user.save()
         return HttpResponse("User does exists!",status=200)
     except:
         return HttpResponse("User does not exists!",status=404)
+
+@csrf_exempt
+def get_notes(request):
+    data = json.loads(request.body)
+    username = data["username"]
+    password = data["password"]
+    min_length = data.get("min_length" , 0)
+    password = hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+    try:
+        user = User.objects.get(username=username , password=password)
+    except:
+        return HttpResponse("User does not exists!",status=404)
+    
+    notes = Note.objects.filter(user=user)
+
+    notes_data = []
+    for note in notes:
+        if note.is_longer_than(min_length):
+            notes_data.append((note.content))
+    
+    return JsonResponse({"notes": notes_data})
